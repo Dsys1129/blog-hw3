@@ -2,10 +2,7 @@ package com.example.bloghw3.user.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.bloghw3.jwtutil.JwtProvider;
 import com.example.bloghw3.user.dto.LoginResponseDTO;
@@ -33,6 +30,9 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody UserRequestDTO userRequestDTO){
         LoginResponseDTO loginResponse = userService.login(userRequestDTO);
         UserResponseDTO responseBody = new UserResponseDTO(loginResponse.getSuccess(), loginResponse.getStatus());
-        return ResponseEntity.status(HttpStatus.OK).header(JwtProvider.AUTHORIZATION_HEADER, loginResponse.getAccessToken()).body(responseBody);
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(JwtProvider.AUTHORIZATION_HEADER, loginResponse.getAccessToken())
+                .header(JwtProvider.REFRESH_TOKEN_HEADER, loginResponse.getRefreshToken())
+                .body(responseBody);
     }
 }

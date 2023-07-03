@@ -2,6 +2,8 @@ package com.example.bloghw3.user.service;
 
 import java.util.Optional;
 
+import com.example.bloghw3.user.entity.RefreshToken;
+import com.example.bloghw3.user.repository.RefreshTokenRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
@@ -55,6 +58,17 @@ public class UserServiceImpl implements UserService {
             throw new PasswordMismatchException("비밀번호 오류");
         }
         String accessToken = jwtProvider.createToken(username);
-        return new LoginResponseDTO("true",200,accessToken);
+        String refreshToken = jwtProvider.createRefreshToken(username);
+
+        Optional<RefreshToken> exitRefreshToken = refreshTokenRepository.findByUsername(username);
+
+        if(exitRefreshToken.isPresent()) {
+            exitRefreshToken.get().updateToken(refreshToken);
+        } else {
+            RefreshToken newRefreshToken = new RefreshToken(username, refreshToken);
+            refreshTokenRepository.save(newRefreshToken);
+        }
+
+        return new LoginResponseDTO("true",200, accessToken, refreshToken);
     }
 }
