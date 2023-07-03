@@ -11,9 +11,13 @@ public class LoginResponseDTO {
 
     private String accessToken;
 
-    public LoginResponseDTO(String success, int status, String accessToken) {
+    private String refreshToken;
+
+
+    public LoginResponseDTO(String success, int status, String accessToken, String refreshToken) {
         this.success = success;
         this.status = status;
         this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 }

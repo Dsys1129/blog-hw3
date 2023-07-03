@@ -25,9 +25,12 @@ public class JwtProvider {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
+    public static final String REFRESH_TOKEN_HEADER = "RefreshToken";
+
     public static final String BEARER_PREFIX = "Bearer ";
 
     private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
+    private final long REFRESH_TOKEN_TIME = 120 * 60 * 1000L; // 120분
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
@@ -49,6 +52,18 @@ public class JwtProvider {
                 Jwts.builder()
                         .setSubject(username) // 사용자 식별자값(ID)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
+                        .setIssuedAt(date) // 발급일
+                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                        .compact();
+    }
+
+    public String createRefreshToken(String username) {
+        Date date = new Date();
+
+        return BEARER_PREFIX +
+                Jwts.builder()
+                        .setSubject(username) // 사용자 식별자값(ID)
+                        .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME)) // 만료 시간
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                         .compact();
