@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.example.bloghw3.jwtutil.JwtProvider;
+import com.example.bloghw3.jwtutil.UserDetails;
 import com.example.bloghw3.user.entity.User;
 import com.example.bloghw3.user.repository.UserRepository;
 
@@ -60,8 +61,9 @@ public class AuthFilter implements Filter {
                 User user = userRepository.findByUsername(info.getSubject()).orElseThrow(() ->
                         new NullPointerException("Not Found User")
                 );
-
-                request.setAttribute("username", user.getUsername());
+                UserDetails userDetails = new UserDetails(user.getUsername(),user.getUserRole());
+                log.info("user Detail = {} {}", userDetails.getUsername(), userDetails.getUserRole());
+                request.setAttribute("user", userDetails);
                 chain.doFilter(request, response); // 다음 Filter 로 이동
             } else {
                 throw new IllegalArgumentException("Not Found Token");
