@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.bloghw3.jwtutil.UserDetails;
 import com.example.bloghw3.post.dto.PostRequestDTO;
 import com.example.bloghw3.post.dto.PostResponseDTO;
 import com.example.bloghw3.post.entity.Post;
@@ -31,15 +32,14 @@ public class PostServiceImpl implements PostService{
     // 게시글 생성
     @Transactional
     @Override
-    public PostResponseDTO createPost(PostRequestDTO postRequestDTO, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new UserNotFoundException("Not Found User")
-        );
+    public PostResponseDTO createPost(PostRequestDTO postRequestDTO, UserDetails userDetails) {
+        User user = userRepository.findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new UserNotFoundException("Not Found User"));
         Post post = Post.builder()
-                .title(postRequestDTO.getTitle())
-                .contents(postRequestDTO.getContents())
-                .user(user)
-                .build();
+            .title(postRequestDTO.getTitle())
+            .contents(postRequestDTO.getContents())
+            .user(user)
+            .build();
         Post savedPost = postRepository.save(post);
 
         PostResponseDTO response = new PostResponseDTO(savedPost);
@@ -74,14 +74,11 @@ public class PostServiceImpl implements PostService{
     // 게시글 수정
     @Transactional
     @Override
-    public PostResponseDTO modifyPost(Long postId, PostRequestDTO postRequestDTO, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new UserNotFoundException("Not Found User")
-        );
+    public PostResponseDTO modifyPost(Long postId, PostRequestDTO postRequestDTO, UserDetails userDetails) {
+        User user = userRepository.findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new UserNotFoundException("Not Found User"));
 
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new PostNotFoundException("Not Found Post")
-        );
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Not Found Post"));
 
         // 해당 유저가 쓴 포스트가 맞는지 검사
         if(!(post.getUser().getId() == user.getId())) {
@@ -97,14 +94,12 @@ public class PostServiceImpl implements PostService{
     // 게시글 삭제
     @Transactional
     @Override
-    public Map<String,String> deletePost(Long postId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new UserNotFoundException("Not Found User")
-        );
+    public Map<String,String> deletePost(Long postId, UserDetails userDetails) {
+        User user = userRepository.findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new UserNotFoundException("Not Found User"));
 
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new PostNotFoundException("Not Found Post")
-        );
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new PostNotFoundException("Not Found Post"));
 
         // 해당 유저가 쓴 포스트가 맞는지 검사
         if(!(post.getUser().getId() == user.getId())) {
