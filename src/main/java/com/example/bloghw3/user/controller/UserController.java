@@ -1,5 +1,6 @@
 package com.example.bloghw3.user.controller;
 
+import com.example.bloghw3.global.BaseResponseDTO;
 import com.example.bloghw3.user.dto.RefreshTokenResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import com.example.bloghw3.jwtutil.JwtProvider;
 import com.example.bloghw3.user.dto.LoginResponseDTO;
 import com.example.bloghw3.user.dto.UserRequestDTO;
-import com.example.bloghw3.user.dto.UserResponseDTO;
 import com.example.bloghw3.user.service.UserService;
 
 import jakarta.validation.Valid;
@@ -22,15 +22,15 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserResponseDTO> signup(@Valid @RequestBody UserRequestDTO userRequestDTO){
-        UserResponseDTO response = userService.signup(userRequestDTO);
+    public ResponseEntity<com.example.bloghw3.global.BaseResponseDTO> signup(@Valid @RequestBody UserRequestDTO userRequestDTO){
+        com.example.bloghw3.global.BaseResponseDTO response = userService.signup(userRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody UserRequestDTO userRequestDTO){
+    public ResponseEntity<com.example.bloghw3.global.BaseResponseDTO> login(@Valid @RequestBody UserRequestDTO userRequestDTO){
         LoginResponseDTO loginResponse = userService.login(userRequestDTO);
-        UserResponseDTO responseBody = new UserResponseDTO(loginResponse.getSuccess(), loginResponse.getStatus());
+        com.example.bloghw3.global.BaseResponseDTO responseBody = new com.example.bloghw3.global.BaseResponseDTO(loginResponse.getMsg(), loginResponse.getStatus());
         return ResponseEntity.status(HttpStatus.OK)
                 .header(JwtProvider.AUTHORIZATION_HEADER, loginResponse.getAccessToken())
                 .header(JwtProvider.REFRESH_TOKEN_HEADER, loginResponse.getRefreshToken())
@@ -38,9 +38,9 @@ public class UserController {
     }
 
     @GetMapping("/reissue")
-    public ResponseEntity<UserResponseDTO> refreshToken(@RequestHeader(JwtProvider.REFRESH_TOKEN_HEADER) String refreshToken) {
+    public ResponseEntity<com.example.bloghw3.global.BaseResponseDTO> refreshToken(@RequestHeader(JwtProvider.REFRESH_TOKEN_HEADER) String refreshToken) {
         RefreshTokenResponseDTO refreshTokenResponseDTO = userService.refreshToken(refreshToken);
-        UserResponseDTO responseBody = new UserResponseDTO(refreshTokenResponseDTO.getSuccess(), refreshTokenResponseDTO.getStatus());
+        com.example.bloghw3.global.BaseResponseDTO responseBody = new BaseResponseDTO(refreshTokenResponseDTO.getMsg(), refreshTokenResponseDTO.getStatus());
         return ResponseEntity.status(HttpStatus.OK)
                 .header(JwtProvider.AUTHORIZATION_HEADER, refreshTokenResponseDTO.getAccessToken())
                 .body(responseBody);

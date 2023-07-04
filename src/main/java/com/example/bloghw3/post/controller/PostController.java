@@ -1,7 +1,6 @@
 package com.example.bloghw3.post.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.bloghw3.global.BaseResponseDTO;
 import com.example.bloghw3.jwtutil.LoginUser;
 import com.example.bloghw3.jwtutil.UserDetails;
 import com.example.bloghw3.post.dto.PostRequestDTO;
@@ -65,8 +65,8 @@ public class PostController {
 
     // 게시글 삭제
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<Map<String,String>> deletePost(@PathVariable("postId") Long postId, @LoginUser UserDetails userDetails){
-        Map<String, String> response = postService.deletePost(postId, userDetails);
+    public ResponseEntity<BaseResponseDTO> deletePost(@PathVariable("postId") Long postId, @LoginUser UserDetails userDetails){
+        BaseResponseDTO response = postService.deletePost(postId, userDetails);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
