@@ -78,16 +78,16 @@ public class UserServiceImpl implements UserService {
     public RefreshTokenResponseDTO refreshToken(String refreshToken) {
         String token = jwtProvider.substringToken(refreshToken);
         jwtProvider.validateToken(token);
-        Optional<RefreshToken> exitRefreshToken = refreshTokenRepository.findByRefreshToken(token);
-        if(exitRefreshToken.isPresent()) {
-            Optional<User> user = userRepository.findById(exitRefreshToken.get().getUser().getId());
-            if(user.isPresent()) {
-                String accessToken = jwtProvider.createToken(user.get().getUsername());
-                return new RefreshTokenResponseDTO("true", 200, accessToken);
-            }
-            throw new UserNotFoundException("존재하지 않는 회원입니다.");
+        RefreshToken exitRefreshToken = refreshTokenRepository.findByRefreshToken(token).orElseThrow(() ->
+                new RefreshTokenExpiredException("Refresh token이 만료되었습니다. 로그인이 필요합니다."));
+
+        Optional<User> user = userRepository.findById(exitRefreshToken.getUser().getId());
+        if(user.isPresent()) {
+            String accessToken = jwtProvider.createToken(user.get().getUsername());
+            return new RefreshTokenResponseDTO("true", 200, accessToken);
         } else {
-            throw new RefreshTokenExpiredException("Refresh token이 만료되었습니다. 로그인이 필요합니다.");
+            refreshTokenRepository.delete(exitRefreshToken);
+            throw new UserNotFoundException("존재하지 않는 회원입니다.");
         }
     }
 }
