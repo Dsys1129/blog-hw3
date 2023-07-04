@@ -32,7 +32,7 @@ public class JwtProvider {
 
     public static final String BEARER_PREFIX = "Bearer ";
 
-    private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
+    private final long ACCESS_TOKEN_TIME = 60 * 60 * 1000L; // 60분
     private final long REFRESH_TOKEN_TIME = 120 * 60 * 1000L; // 120분
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
@@ -48,30 +48,25 @@ public class JwtProvider {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    public String createToken(String username, UserRole role) {
+    public String createToken(String username, UserRole role, long expiredTime) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(username) // 사용자 식별자값(ID)
                         .claim(AUTHORIZATION_KEY, role) // 사용자 권한
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
+                        .setExpiration(new Date(date.getTime() + expiredTime)) // 만료 시간
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
                         .compact();
     }
 
-    public String createRefreshToken(String username, UserRole role) {
-        Date date = new Date();
+    public String createAccessToken(String username, UserRole role) {
+        return createToken(username, role, ACCESS_TOKEN_TIME);
+    }
 
-        return BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(username) // 사용자 식별자값(ID)
-                        .claim(AUTHORIZATION_KEY, role) // 사용자 권한
-                        .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME)) // 만료 시간
-                        .setIssuedAt(date) // 발급일
-                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
-                        .compact();
+    public String createRefreshToken(String username, UserRole role) {
+        return createToken(username, role, REFRESH_TOKEN_TIME);
     }
 
     // response header의 'Bearer ' 문자열 제거
