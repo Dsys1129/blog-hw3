@@ -2,7 +2,9 @@ package com.example.bloghw3.user.service;
 
 import java.util.Optional;
 
+import com.example.bloghw3.user.dto.RefreshTokenResponseDTO;
 import com.example.bloghw3.user.entity.RefreshToken;
+import com.example.bloghw3.user.exception.RefreshTokenExpiredException;
 import com.example.bloghw3.user.repository.RefreshTokenRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,18 +59,35 @@ public class UserServiceImpl implements UserService {
         if (!passwordEncoder.matches(rawPassword,user.getPassword())){
             throw new PasswordMismatchException("비밀번호 오류");
         }
-        String accessToken = jwtProvider.createToken(username);
-        String refreshToken = jwtProvider.createRefreshToken(username);
+        String accessToken = jwtProvider.createToken(username, user.getUserRole());
+        String refreshToken = jwtProvider.createRefreshToken(username, user.getUserRole());
 
-        Optional<RefreshToken> exitRefreshToken = refreshTokenRepository.findByUsername(username);
+        Optional<RefreshToken> exitRefreshToken = refreshTokenRepository.findById(user.getId());
 
         if(exitRefreshToken.isPresent()) {
-            exitRefreshToken.get().updateToken(refreshToken);
+            exitRefreshToken.get().updateToken(jwtProvider.substringToken(refreshToken));
         } else {
-            RefreshToken newRefreshToken = new RefreshToken(username, refreshToken);
+            RefreshToken newRefreshToken = new RefreshToken(user, jwtProvider.substringToken(refreshToken));
             refreshTokenRepository.save(newRefreshToken);
         }
 
         return new LoginResponseDTO("true",200, accessToken, refreshToken);
+    }
+
+    @Override
+    public RefreshTokenResponseDTO refreshToken(String refreshToken) {
+        String token = jwtProvider.substringToken(refreshToken);
+        jwtProvider.validateToken(token);
+        RefreshToken exitRefreshToken = refreshTokenRepository.findByRefreshToken(token).orElseThrow(() ->
+                new RefreshTokenExpiredException("Refresh token이 만료되었습니다. 로그인이 필요합니다."));
+
+        Optional<User> user = userRepository.findById(exitRefreshToken.getUser().getId());
+        if(user.isPresent()) {
+            String accessToken = jwtProvider.createToken(user.get().getUsername(), user.get().getUserRole());
+            return new RefreshTokenResponseDTO("true", 200, accessToken);
+        } else {
+            refreshTokenRepository.delete(exitRefreshToken);
+            throw new UserNotFoundException("존재하지 않는 회원입니다.");
+        }
     }
 }

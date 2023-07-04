@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.example.bloghw3.user.exception.RefreshTokenExpiredException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -65,6 +66,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionDTO> postNotFoundExceptionHandler(PostNotFoundException e){
         Map<String, String> errors = Collections.singletonMap("error", e.getMessage());
         ExceptionDTO errorResponse = new ExceptionDTO("false",404, errors);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    // Refresh Token 만료
+    @ExceptionHandler(RefreshTokenExpiredException.class)
+    public ResponseEntity<ExceptionDTO> refreshTokenExpiredException(RefreshTokenExpiredException e){
+        Map<String, String> errors = Collections.singletonMap("error", e.getMessage());
+        ExceptionDTO errorResponse = new ExceptionDTO("false",402, errors);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 

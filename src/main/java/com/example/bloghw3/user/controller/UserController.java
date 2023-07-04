@@ -1,5 +1,6 @@
 package com.example.bloghw3.user.controller;
 
+import com.example.bloghw3.user.dto.RefreshTokenResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .header(JwtProvider.AUTHORIZATION_HEADER, loginResponse.getAccessToken())
                 .header(JwtProvider.REFRESH_TOKEN_HEADER, loginResponse.getRefreshToken())
+                .body(responseBody);
+    }
+
+    @GetMapping("/reissue")
+    public ResponseEntity<UserResponseDTO> refreshToken(@RequestHeader(JwtProvider.REFRESH_TOKEN_HEADER) String refreshToken) {
+        RefreshTokenResponseDTO refreshTokenResponseDTO = userService.refreshToken(refreshToken);
+        UserResponseDTO responseBody = new UserResponseDTO(refreshTokenResponseDTO.getSuccess(), refreshTokenResponseDTO.getStatus());
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(JwtProvider.AUTHORIZATION_HEADER, refreshTokenResponseDTO.getAccessToken())
                 .body(responseBody);
     }
 }
