@@ -294,8 +294,6 @@ class PostControllerTest {
 
     }
 
-
-
     @Nested
     @DisplayName("게시글 삭제 실패")
     class DeletePost_X {

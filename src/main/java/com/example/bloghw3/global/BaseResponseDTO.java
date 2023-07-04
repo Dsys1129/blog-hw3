@@ -5,12 +5,12 @@ import lombok.Getter;
 @Getter
 public class BaseResponseDTO {
 
+    private final String msg;
+
     private final int status;
 
-    private final String message;
-
-    public BaseResponseDTO(int status, String message) {
+    public BaseResponseDTO(String msg, int status) {
+        this.msg = msg;
         this.status = status;
-        this.message = message;
     }
 }

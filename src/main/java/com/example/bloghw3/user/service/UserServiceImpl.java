@@ -6,11 +6,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.bloghw3.global.BaseResponseDTO;
 import com.example.bloghw3.jwtutil.JwtProvider;
 import com.example.bloghw3.user.dto.LoginResponseDTO;
 import com.example.bloghw3.user.dto.RefreshTokenResponseDTO;
 import com.example.bloghw3.user.dto.UserRequestDTO;
-import com.example.bloghw3.user.dto.UserResponseDTO;
 import com.example.bloghw3.user.entity.RefreshToken;
 import com.example.bloghw3.user.entity.User;
 import com.example.bloghw3.user.exception.PasswordMismatchException;
@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserResponseDTO signup(UserRequestDTO userRequestDTO) {
+    public BaseResponseDTO signup(UserRequestDTO userRequestDTO) {
         Optional<User> findUser = userRepository.findByUsername(userRequestDTO.getUsername());
 
         if (findUser.isPresent()){
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
         User user = User.createUser(userRequestDTO.getUsername(), passwordEncoder.encode(userRequestDTO.getPassword()));
         userRepository.save(user);
 
-        return new UserResponseDTO("true",201);
+        return new BaseResponseDTO("회원가입 성공",201);
     }
 
     @Transactional
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
             refreshTokenRepository.save(newRefreshToken);
         }
 
-        return new LoginResponseDTO("true",200, accessToken, refreshToken);
+        return new LoginResponseDTO("로그인 성공",200, accessToken, refreshToken);
     }
 
     @Override

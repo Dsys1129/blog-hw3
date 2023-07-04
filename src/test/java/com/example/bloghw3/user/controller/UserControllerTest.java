@@ -15,8 +15,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.bloghw3.UserSetup;
+import com.example.bloghw3.global.BaseResponseDTO;
 import com.example.bloghw3.user.dto.UserRequestDTO;
-import com.example.bloghw3.user.dto.UserResponseDTO;
 import com.example.bloghw3.user.entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,7 +41,7 @@ class UserControllerTest {
         @DisplayName("대소문자, 숫자, 특수문자, 길이 충족")
         void signUp_O_1() throws Exception{
             UserRequestDTO userRequestDTO = new UserRequestDTO("username1","Password1!");
-            UserResponseDTO expectedResponse = new UserResponseDTO("true",201);
+            BaseResponseDTO expectedResponse = new BaseResponseDTO("회원가입 성공", 201);
             String request = objectMapper.writeValueAsString(userRequestDTO);
 
             mockMvc.perform(post("/api/signup")
@@ -49,7 +49,7 @@ class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.success").value(expectedResponse.getSuccess()))
+                .andExpect(jsonPath("$.msg").value(expectedResponse.getMsg()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
                 .andDo(MockMvcResultHandlers.print());
         }
@@ -58,7 +58,7 @@ class UserControllerTest {
         @DisplayName("소문자, 숫자, 특수문자, 길이 충족")
         void signUp_O_2() throws Exception{
             UserRequestDTO userRequestDTO = new UserRequestDTO("username1","password1!");
-            UserResponseDTO expectedResponse = new UserResponseDTO("true",201);
+            BaseResponseDTO expectedResponse = new BaseResponseDTO("회원가입 성공", 201);
             String request = objectMapper.writeValueAsString(userRequestDTO);
 
             mockMvc.perform(post("/api/signup")
@@ -66,7 +66,7 @@ class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.success").value(expectedResponse.getSuccess()))
+                .andExpect(jsonPath("$.msg").value(expectedResponse.getMsg()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
                 .andDo(MockMvcResultHandlers.print());
         }
@@ -75,7 +75,7 @@ class UserControllerTest {
         @DisplayName("대문자, 숫자, 특수문자, 길이 충족")
         void signUp_O_3() throws Exception{
             UserRequestDTO userRequestDTO = new UserRequestDTO("username1","PASSWORD1!");
-            UserResponseDTO expectedResponse = new UserResponseDTO("true",201);
+            BaseResponseDTO expectedResponse = new BaseResponseDTO("회원가입 성공", 201);
             String request = objectMapper.writeValueAsString(userRequestDTO);
 
             mockMvc.perform(post("/api/signup")
@@ -83,7 +83,7 @@ class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.success").value(expectedResponse.getSuccess()))
+                .andExpect(jsonPath("$.msg").value(expectedResponse.getMsg()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
                 .andDo(MockMvcResultHandlers.print());
         }
@@ -99,7 +99,7 @@ class UserControllerTest {
             User existingUser = User.createUser(userRequestDTO.getUsername(), userRequestDTO.getPassword());
             userSetup.saveUser(existingUser);
             UserRequestDTO newUserRequestDTO = new UserRequestDTO("username1","DiffPassword1!");
-            UserResponseDTO expectedResponse = new UserResponseDTO("false",400);
+            BaseResponseDTO expectedResponse = new BaseResponseDTO("false",400);
             String request = objectMapper.writeValueAsString(newUserRequestDTO);
 
             mockMvc.perform(post("/api/signup")
@@ -107,7 +107,6 @@ class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(expectedResponse.getSuccess()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
                 .andDo(MockMvcResultHandlers.print());
         }
@@ -117,7 +116,7 @@ class UserControllerTest {
         void signUp_X_2() throws Exception{
 
             UserRequestDTO userRequestDTO = new UserRequestDTO("asd","Password1!");
-            UserResponseDTO expectedResponse = new UserResponseDTO("false",400);
+            BaseResponseDTO expectedResponse = new BaseResponseDTO("false",400);
             String request = objectMapper.writeValueAsString(userRequestDTO);
 
             mockMvc.perform(post("/api/signup")
@@ -125,7 +124,6 @@ class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(expectedResponse.getSuccess()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
                 .andDo(MockMvcResultHandlers.print());
         }
@@ -135,7 +133,7 @@ class UserControllerTest {
         void signUp_X_3() throws Exception{
 
             UserRequestDTO userRequestDTO = new UserRequestDTO("qwerasdfzxcv","Password!1P#");
-            UserResponseDTO expectedResponse = new UserResponseDTO("false",400);
+            BaseResponseDTO expectedResponse = new BaseResponseDTO("false",400);
             String request = objectMapper.writeValueAsString(userRequestDTO);
 
             mockMvc.perform(post("/api/signup")
@@ -143,7 +141,6 @@ class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(expectedResponse.getSuccess()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
                 .andDo(MockMvcResultHandlers.print());
         }
@@ -153,7 +150,7 @@ class UserControllerTest {
         void signUp_X_4() throws Exception {
 
             UserRequestDTO userRequestDTO = new UserRequestDTO("abAb!@12","Password1!");
-            UserResponseDTO expectedResponse = new UserResponseDTO("false",400);
+            BaseResponseDTO expectedResponse = new BaseResponseDTO("false",400);
             String request = objectMapper.writeValueAsString(userRequestDTO);
 
             mockMvc.perform(post("/api/signup")
@@ -161,7 +158,6 @@ class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(expectedResponse.getSuccess()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
                 .andDo(MockMvcResultHandlers.print());
         }
@@ -171,7 +167,7 @@ class UserControllerTest {
         void signUp_X_5() throws Exception{
 
             UserRequestDTO userRequestDTO = new UserRequestDTO("username","Pas12!@");
-            UserResponseDTO expectedResponse = new UserResponseDTO("false",400);
+            BaseResponseDTO expectedResponse = new BaseResponseDTO("false",400);
             String request = objectMapper.writeValueAsString(userRequestDTO);
 
             mockMvc.perform(post("/api/signup")
@@ -179,7 +175,6 @@ class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(expectedResponse.getSuccess()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
                 .andDo(MockMvcResultHandlers.print());
         }
@@ -189,7 +184,7 @@ class UserControllerTest {
         void signUp_X_6() throws Exception{
 
             UserRequestDTO userRequestDTO = new UserRequestDTO("username","Pas123!@#PASD1!2");
-            UserResponseDTO expectedResponse = new UserResponseDTO("false",400);
+            BaseResponseDTO expectedResponse = new BaseResponseDTO("false",400);
             String request = objectMapper.writeValueAsString(userRequestDTO);
 
             mockMvc.perform(post("/api/signup")
@@ -197,7 +192,6 @@ class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(expectedResponse.getSuccess()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
                 .andDo(MockMvcResultHandlers.print());
         }
@@ -207,7 +201,7 @@ class UserControllerTest {
         void signUp_X_7() throws Exception {
 
             UserRequestDTO userRequestDTO = new UserRequestDTO("username","PassWord12");
-            UserResponseDTO expectedResponse = new UserResponseDTO("false",400);
+            BaseResponseDTO expectedResponse = new BaseResponseDTO("false",400);
             String request = objectMapper.writeValueAsString(userRequestDTO);
 
             mockMvc.perform(post("/api/signup")
@@ -215,7 +209,6 @@ class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(expectedResponse.getSuccess()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
                 .andDo(MockMvcResultHandlers.print());
         }
@@ -225,7 +218,7 @@ class UserControllerTest {
         void signUp_X_8() throws Exception {
 
             UserRequestDTO userRequestDTO = new UserRequestDTO("username","PassWord12");
-            UserResponseDTO expectedResponse = new UserResponseDTO("false",400);
+            BaseResponseDTO expectedResponse = new BaseResponseDTO("false",400);
             String request = objectMapper.writeValueAsString(userRequestDTO);
 
             mockMvc.perform(post("/api/signup")
@@ -233,7 +226,6 @@ class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(expectedResponse.getSuccess()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
                 .andDo(MockMvcResultHandlers.print());
         }
@@ -243,7 +235,7 @@ class UserControllerTest {
         void signUp_X_9() throws Exception {
 
             UserRequestDTO userRequestDTO = new UserRequestDTO("username","PassWord!@#");
-            UserResponseDTO expectedResponse = new UserResponseDTO("false",400);
+            BaseResponseDTO expectedResponse = new BaseResponseDTO("false",400);
             String request = objectMapper.writeValueAsString(userRequestDTO);
 
             mockMvc.perform(post("/api/signup")
@@ -251,7 +243,6 @@ class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(expectedResponse.getSuccess()))
                 .andExpect(jsonPath("$.status").value(expectedResponse.getStatus()))
                 .andDo(MockMvcResultHandlers.print());
         }

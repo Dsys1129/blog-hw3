@@ -59,14 +59,13 @@ public class AuthFilter implements Filter {
 
                 // jwt 토큰에 subject로 넣어진 유저 네임으로 실제 존재하는 유저인지 확인
                 User user = userRepository.findByUsername(info.getSubject()).orElseThrow(() ->
-                        new NullPointerException("Not Found User")
+                        new NullPointerException("회원을 찾을 수 없습니다.")
                 );
                 UserDetails userDetails = new UserDetails(user.getUsername(),user.getUserRole());
-                log.info("user Detail = {} {}", userDetails.getUsername(), userDetails.getUserRole());
                 request.setAttribute("user", userDetails);
                 chain.doFilter(request, response); // 다음 Filter 로 이동
             } else {
-                throw new IllegalArgumentException("Not Found Token");
+                throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
             }
         }
     }

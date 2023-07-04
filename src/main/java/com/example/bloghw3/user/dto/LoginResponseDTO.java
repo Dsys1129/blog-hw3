@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class LoginResponseDTO {
 
-    private String success;
+    private String msg;
 
     private int status;
 
@@ -14,8 +14,8 @@ public class LoginResponseDTO {
     private String refreshToken;
 
 
-    public LoginResponseDTO(String success, int status, String accessToken, String refreshToken) {
-        this.success = success;
+    public LoginResponseDTO(String msg, int status, String accessToken, String refreshToken) {
+        this.msg = msg;
         this.status = status;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
