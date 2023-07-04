@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
         if (!passwordEncoder.matches(rawPassword,user.getPassword())){
             throw new PasswordMismatchException("비밀번호 오류");
         }
-        String accessToken = jwtProvider.createToken(username, user.getUserRole());
+        String accessToken = jwtProvider.createAccessToken(username, user.getUserRole());
         String refreshToken = jwtProvider.createRefreshToken(username, user.getUserRole());
 
         Optional<RefreshToken> exitRefreshToken = refreshTokenRepository.findById(user.getId());
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> user = userRepository.findById(exitRefreshToken.getUser().getId());
         if(user.isPresent()) {
-            String accessToken = jwtProvider.createToken(user.get().getUsername(), user.get().getUserRole());
+            String accessToken = jwtProvider.createAccessToken(user.get().getUsername(), user.get().getUserRole());
             return new RefreshTokenResponseDTO("true", 200, accessToken);
         } else {
             refreshTokenRepository.delete(exitRefreshToken);
