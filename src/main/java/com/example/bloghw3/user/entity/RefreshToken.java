@@ -14,13 +14,14 @@ public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
-    private String username;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     @NotBlank
     private String refreshToken;
 
-    public RefreshToken(String username, String refreshToken) {
-        this.username = username;
+    public RefreshToken(User user, String refreshToken) {
+        this.user = user;
         this.refreshToken = refreshToken;
     }
 
