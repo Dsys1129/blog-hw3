@@ -9,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,10 +31,17 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserRole userRole;
 
-    @Builder
-    private User(String username, String password) {
+    private User(String username, String password, UserRole userRole) {
         this.username = username;
         this.password = password;
-        this.userRole = UserRole.USER;
+        this.userRole = userRole;
+    }
+
+    public static User createUser(String username, String password){
+        return new User(username,password,UserRole.USER);
+    }
+
+    public static User createAdmin(String username, String password) {
+        return new User(username,password,UserRole.ADMIN);
     }
 }

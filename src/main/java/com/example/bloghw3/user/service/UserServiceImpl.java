@@ -2,22 +2,22 @@ package com.example.bloghw3.user.service;
 
 import java.util.Optional;
 
-import com.example.bloghw3.user.dto.RefreshTokenResponseDTO;
-import com.example.bloghw3.user.entity.RefreshToken;
-import com.example.bloghw3.user.exception.RefreshTokenExpiredException;
-import com.example.bloghw3.user.repository.RefreshTokenRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.bloghw3.jwtutil.JwtProvider;
 import com.example.bloghw3.user.dto.LoginResponseDTO;
+import com.example.bloghw3.user.dto.RefreshTokenResponseDTO;
 import com.example.bloghw3.user.dto.UserRequestDTO;
 import com.example.bloghw3.user.dto.UserResponseDTO;
+import com.example.bloghw3.user.entity.RefreshToken;
 import com.example.bloghw3.user.entity.User;
 import com.example.bloghw3.user.exception.PasswordMismatchException;
+import com.example.bloghw3.user.exception.RefreshTokenExpiredException;
 import com.example.bloghw3.user.exception.UserDuplicationException;
 import com.example.bloghw3.user.exception.UserNotFoundException;
+import com.example.bloghw3.user.repository.RefreshTokenRepository;
 import com.example.bloghw3.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -39,10 +39,7 @@ public class UserServiceImpl implements UserService {
         if (findUser.isPresent()){
             throw new UserDuplicationException("아이디 중복");
         }
-        User user = User.builder()
-            .username(userRequestDTO.getUsername())
-            .password(passwordEncoder.encode(userRequestDTO.getPassword()))
-            .build();
+        User user = User.createUser(userRequestDTO.getUsername(), passwordEncoder.encode(userRequestDTO.getPassword()));
         userRepository.save(user);
 
         return new UserResponseDTO("true",201);
