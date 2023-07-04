@@ -25,7 +25,7 @@ public class JwtProvider {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
-    public static final String REFRESH_TOKEN_HEADER = "RefreshToken";
+    public static final String REFRESH_TOKEN_HEADER = "Refresh-Token";
 
     public static final String BEARER_PREFIX = "Bearer ";
 

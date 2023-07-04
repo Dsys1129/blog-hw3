@@ -2,7 +2,9 @@ package com.example.bloghw3.user.service;
 
 import java.util.Optional;
 
+import com.example.bloghw3.user.dto.RefreshTokenResponseDTO;
 import com.example.bloghw3.user.entity.RefreshToken;
+import com.example.bloghw3.user.exception.RefreshTokenExpiredException;
 import com.example.bloghw3.user.repository.RefreshTokenRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,15 +62,32 @@ public class UserServiceImpl implements UserService {
         String accessToken = jwtProvider.createToken(username);
         String refreshToken = jwtProvider.createRefreshToken(username);
 
-        Optional<RefreshToken> exitRefreshToken = refreshTokenRepository.findByUsername(username);
+        Optional<RefreshToken> exitRefreshToken = refreshTokenRepository.findById(user.getId());
 
         if(exitRefreshToken.isPresent()) {
-            exitRefreshToken.get().updateToken(refreshToken);
+            exitRefreshToken.get().updateToken(jwtProvider.substringToken(refreshToken));
         } else {
-            RefreshToken newRefreshToken = new RefreshToken(username, refreshToken);
+            RefreshToken newRefreshToken = new RefreshToken(user, jwtProvider.substringToken(refreshToken));
             refreshTokenRepository.save(newRefreshToken);
         }
 
         return new LoginResponseDTO("true",200, accessToken, refreshToken);
+    }
+
+    @Override
+    public RefreshTokenResponseDTO refreshToken(String refreshToken) {
+        String token = jwtProvider.substringToken(refreshToken);
+        jwtProvider.validateToken(token);
+        Optional<RefreshToken> exitRefreshToken = refreshTokenRepository.findByRefreshToken(token);
+        if(exitRefreshToken.isPresent()) {
+            Optional<User> user = userRepository.findById(exitRefreshToken.get().getUser().getId());
+            if(user.isPresent()) {
+                String accessToken = jwtProvider.createToken(user.get().getUsername());
+                return new RefreshTokenResponseDTO("true", 200, accessToken);
+            }
+            throw new UserNotFoundException("존재하지 않는 회원입니다.");
+        } else {
+            throw new RefreshTokenExpiredException("Refresh token이 만료되었습니다. 로그인이 필요합니다.");
+        }
     }
 }

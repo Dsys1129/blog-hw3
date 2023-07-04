@@ -37,7 +37,7 @@ public class AuthFilter implements Filter {
         String url = httpServletRequest.getRequestURI();
 
         if (StringUtils.hasText(url) &&
-                (url.startsWith("/api/signup") || url.startsWith("/api/login") || (url.startsWith("/api/posts") && httpServletRequest.getMethod().equals("GET")) || url.startsWith("/swagger") || url.startsWith("/v3/api-docs") || url.startsWith("/swagger-resources")) || url.startsWith("/h2-console")) {
+                (url.startsWith("/api/signup") || url.startsWith("/api/login") || url.startsWith("/api/reissue") || (url.startsWith("/api/posts") && httpServletRequest.getMethod().equals("GET")) || url.startsWith("/swagger") || url.startsWith("/v3/api-docs") || url.startsWith("/swagger-resources")) || url.startsWith("/h2-console")) {
             // 회원가입, 로그인, 게시글 조회 API 는 인증 필요없이 요청 진행
             chain.doFilter(request, response); // 다음 Filter 로 이동
         } else {
