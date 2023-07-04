@@ -75,7 +75,7 @@ public class JwtProvider {
             return tokenValue.substring(7);
         }
         logger.error("Not Found Token");
-        throw new NullPointerException("Not Found Token");
+        throw new NullPointerException("토큰이 유효하지 않습니다.");
     }
 
     // 토큰 검증
@@ -85,19 +85,19 @@ public class JwtProvider {
 
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-            throw new TokenValidException("Invalid JWT signature", e);
+            throw new TokenValidException("토큰이 유효하지 않습니다.", e);
         } catch (ExpiredJwtException e) {
             logger.error("Expired JWT token, 만료된 JWT token 입니다.");
-            throw new TokenValidException("Expired JWT token", e);
+            throw new TokenValidException("토큰이 유효하지 않습니다.", e);
         } catch (UnsupportedJwtException e) {
             logger.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-            throw new TokenValidException("Unsupported JWT token", e);
+            throw new TokenValidException("토큰이 유효하지 않습니다.", e);
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-            throw new TokenValidException("JWT claims is empty", e);
+            throw new TokenValidException("토큰이 유효하지 않습니다.", e);
         } catch (RuntimeException e){
             logger.error("An unknown error occurred, 알 수 없는 오류가 발생했습니다.");
-            throw new TokenValidException("An unknown error occurred", e);
+            throw new TokenValidException("알 수 없는 오류가 발생했습니다.", e);
         }
     }
 

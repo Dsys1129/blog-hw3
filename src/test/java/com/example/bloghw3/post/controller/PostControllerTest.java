@@ -103,7 +103,7 @@ class PostControllerTest {
                     .content(request))
 
                 //then
-                .andExpect(status().isUnauthorized())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
         }
 
@@ -123,7 +123,7 @@ class PostControllerTest {
                     .content(request)
                     .header(JwtProvider.AUTHORIZATION_HEADER, InvalidToken))
                 //then
-                .andExpect(status().isUnauthorized())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
         }
 
@@ -142,7 +142,7 @@ class PostControllerTest {
                     .content(request)
                     .header(JwtProvider.AUTHORIZATION_HEADER, expiredToken))
                 //then
-                .andExpect(status().isUnauthorized())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
         }
 
@@ -161,7 +161,7 @@ class PostControllerTest {
                     .content(request)
                     .header(JwtProvider.AUTHORIZATION_HEADER, accessToken))
                 //then
-                .andExpect(status().isUnauthorized())
+                .andExpect(status().isBadRequest())
                 .andDo(print());
         }
     }
