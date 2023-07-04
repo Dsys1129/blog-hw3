@@ -41,24 +41,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PasswordMismatchException.class)
     public ResponseEntity<ExceptionDTO> passwordMismatchExceptionHandler(PasswordMismatchException e){
         Map<String, String> errors = Collections.singletonMap("error", e.getMessage());
-        ExceptionDTO errorResponse = new ExceptionDTO("false",401, errors);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        ExceptionDTO errorResponse = new ExceptionDTO("false",400, errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     // 유저 정보 없음
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ExceptionDTO> userNotFoundExceptionHandler(UserNotFoundException e){
         Map<String, String> errors = Collections.singletonMap("error", e.getMessage());
-        ExceptionDTO errorResponse = new ExceptionDTO("false",404, errors);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        ExceptionDTO errorResponse = new ExceptionDTO("false",400, errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     // 사용자 이름 중복
     @ExceptionHandler(UserDuplicationException.class)
     public ResponseEntity<ExceptionDTO> userDuplicationExceptionHandler(UserDuplicationException e){
         Map<String, String> errors = Collections.singletonMap("error", e.getMessage());
-        ExceptionDTO errorResponse = new ExceptionDTO("false",409, errors);
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+        ExceptionDTO errorResponse = new ExceptionDTO("false",400, errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     // 게시글 정보 없음
@@ -73,15 +73,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RefreshTokenExpiredException.class)
     public ResponseEntity<ExceptionDTO> refreshTokenExpiredException(RefreshTokenExpiredException e){
         Map<String, String> errors = Collections.singletonMap("error", e.getMessage());
-        ExceptionDTO errorResponse = new ExceptionDTO("false",402, errors);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        ExceptionDTO errorResponse = new ExceptionDTO("false",400, errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     // 권한 없음
     @ExceptionHandler(PermissionException.class)
     public ResponseEntity<ExceptionDTO> permissionExceptionHandler(PermissionException e){
         Map<String, String> errors = Collections.singletonMap("error", e.getMessage());
-        ExceptionDTO errorResponse = new ExceptionDTO("false",403, errors);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+        ExceptionDTO errorResponse = new ExceptionDTO("false",400, errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 }

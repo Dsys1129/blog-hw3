@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> findUser = userRepository.findByUsername(userRequestDTO.getUsername());
 
         if (findUser.isPresent()){
-            throw new UserDuplicationException("아이디 중복");
+            throw new UserDuplicationException("중복된 username 입니다.");
         }
         User user = User.createUser(userRequestDTO.getUsername(), passwordEncoder.encode(userRequestDTO.getPassword()));
         userRepository.save(user);
@@ -51,10 +51,10 @@ public class UserServiceImpl implements UserService {
         String username = userRequestDTO.getUsername();
         String rawPassword = userRequestDTO.getPassword();
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UserNotFoundException("등록된 사용자가 아닙니다."));
+            .orElseThrow(() -> new UserNotFoundException("회원을 찾을 수 없습니다."));
 
         if (!passwordEncoder.matches(rawPassword,user.getPassword())){
-            throw new PasswordMismatchException("비밀번호 오류");
+            throw new PasswordMismatchException("회원을 찾을 수 없습니다.");
         }
         String accessToken = jwtProvider.createAccessToken(username, user.getUserRole());
         String refreshToken = jwtProvider.createRefreshToken(username, user.getUserRole());

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.example.bloghw3.post.exception.PermissionException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,10 +76,10 @@ public class PostServiceImpl implements PostService{
     public PostResponseDTO modifyPost(Long postId, PostRequestDTO postRequestDTO, UserDetails userDetails) {
         User user = getUserByUsername(userDetails.getUsername());
 
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Not Found Post"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
 
         if(!hasRole(userDetails,user,post)) {
-            throw new IllegalArgumentException("Not The User's Post");
+            throw new PermissionException("작성자만 삭제/수정할 수 있습니다.");
         }
 
         post.modifyPost(postRequestDTO.getTitle(), postRequestDTO.getContents());
@@ -96,7 +97,7 @@ public class PostServiceImpl implements PostService{
         Post post = getPostById(postId);
 
         if(!hasRole(userDetails,user,post)) {
-            throw new IllegalArgumentException("Not The User's Post");
+            throw new PermissionException("작성자만 삭제/수정할 수 있습니다.");
         }
 
         postRepository.delete(post);
@@ -110,11 +111,11 @@ public class PostServiceImpl implements PostService{
 
     private User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
-            .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+            .orElseThrow(() -> new PermissionException("작성자만 삭제/수정할 수 있습니다."));
     }
 
     private Post getPostById(Long postId) {
         return postRepository.findById(postId)
-            .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+            .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
     }
 }
