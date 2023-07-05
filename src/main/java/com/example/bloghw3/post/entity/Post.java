@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.example.bloghw3.comment.entity.Comment;
 import com.example.bloghw3.user.entity.User;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -49,7 +50,7 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post", fetch = LAZY)
+    @OneToMany(mappedBy = "post", fetch = LAZY, cascade = CascadeType.REMOVE)
     @OrderBy(value = "createdDate desc")
     private List<Comment> commentList = new ArrayList<>();
 
