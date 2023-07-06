@@ -22,15 +22,15 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<com.example.bloghw3.global.BaseResponseDTO> signup(@Valid @RequestBody UserRequestDTO userRequestDTO){
-        com.example.bloghw3.global.BaseResponseDTO response = userService.signup(userRequestDTO);
+    public ResponseEntity<BaseResponseDTO> signup(@Valid @RequestBody UserRequestDTO userRequestDTO){
+        BaseResponseDTO response = userService.signup(userRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<com.example.bloghw3.global.BaseResponseDTO> login(@Valid @RequestBody UserRequestDTO userRequestDTO){
+    public ResponseEntity<BaseResponseDTO> login(@Valid @RequestBody UserRequestDTO userRequestDTO){
         LoginResponseDTO loginResponse = userService.login(userRequestDTO);
-        com.example.bloghw3.global.BaseResponseDTO responseBody = new com.example.bloghw3.global.BaseResponseDTO(loginResponse.getMsg(), loginResponse.getStatus());
+        BaseResponseDTO responseBody = new BaseResponseDTO(loginResponse.getMsg(), loginResponse.getStatus());
         return ResponseEntity.status(HttpStatus.OK)
                 .header(JwtProvider.AUTHORIZATION_HEADER, loginResponse.getAccessToken())
                 .header(JwtProvider.REFRESH_TOKEN_HEADER, loginResponse.getRefreshToken())
@@ -38,9 +38,9 @@ public class UserController {
     }
 
     @GetMapping("/reissue")
-    public ResponseEntity<com.example.bloghw3.global.BaseResponseDTO> refreshToken(@RequestHeader(JwtProvider.REFRESH_TOKEN_HEADER) String refreshToken) {
+    public ResponseEntity<BaseResponseDTO> refreshToken(@RequestHeader(JwtProvider.REFRESH_TOKEN_HEADER) String refreshToken) {
         RefreshTokenResponseDTO refreshTokenResponseDTO = userService.refreshToken(refreshToken);
-        com.example.bloghw3.global.BaseResponseDTO responseBody = new BaseResponseDTO(refreshTokenResponseDTO.getMsg(), refreshTokenResponseDTO.getStatus());
+        BaseResponseDTO responseBody = new BaseResponseDTO(refreshTokenResponseDTO.getMsg(), refreshTokenResponseDTO.getStatus());
         return ResponseEntity.status(HttpStatus.OK)
                 .header(JwtProvider.AUTHORIZATION_HEADER, refreshTokenResponseDTO.getAccessToken())
                 .body(responseBody);
