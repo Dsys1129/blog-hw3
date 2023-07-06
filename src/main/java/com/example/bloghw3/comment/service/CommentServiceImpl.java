@@ -31,9 +31,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public CommentResponseDTO createComment(CommentRequestDTO commentRequestDTO, UserDetails userDetails) {
+    public CommentResponseDTO createComment(Long postId, CommentRequestDTO commentRequestDTO, UserDetails userDetails) {
         User user = getUserByUsername(userDetails.getUsername());
-        Post post = getPostById(commentRequestDTO.getPostId());
+        Post post = getPostById(postId);
         Comment comment = Comment.builder()
             .post(post)
             .user(user)
@@ -47,7 +47,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public CommentResponseDTO modifyComment(Long commentId, CommentRequestDTO commentRequestDTO, UserDetails userDetails) {
+    public CommentResponseDTO modifyComment(Long postId, Long commentId, CommentRequestDTO commentRequestDTO, UserDetails userDetails) {
         User user = getUserByUsername(userDetails.getUsername());
         Comment comment =  getCommentById(commentId);
 
@@ -62,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public BaseResponseDTO deleteComment(Long commentId, UserDetails userDetails) {
+    public BaseResponseDTO deleteComment(Long postId, Long commentId, UserDetails userDetails) {
         User user = getUserByUsername(userDetails.getUsername());
 
         Comment comment = getCommentById(commentId);
