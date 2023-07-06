@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findById(exitRefreshToken.getUser().getId());
         if(user.isPresent()) {
             String accessToken = jwtProvider.createAccessToken(user.get().getUsername(), user.get().getUserRole());
-            return new RefreshTokenResponseDTO("true", 200, accessToken);
+            return new RefreshTokenResponseDTO("재발급 성공", 200, accessToken);
         } else {
             refreshTokenRepository.delete(exitRefreshToken);
             throw new UserNotFoundException("존재하지 않는 회원입니다.");
