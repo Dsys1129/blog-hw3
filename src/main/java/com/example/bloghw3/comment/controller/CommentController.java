@@ -23,27 +23,27 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/posts/{postId}")
 public class CommentController {
 
     private final CommentService commentService;
 
     @PostMapping("/comments")
-    public ResponseEntity<CommentResponseDTO> createComment(@RequestBody CommentRequestDTO commentRequestDTO, @LoginUser UserDetails userDetails) {
-        CommentResponseDTO response = commentService.createComment(commentRequestDTO, userDetails);
+    public ResponseEntity<CommentResponseDTO> createComment(@PathVariable Long postId, @RequestBody CommentRequestDTO commentRequestDTO, @LoginUser UserDetails userDetails) {
+        CommentResponseDTO response = commentService.createComment(postId, commentRequestDTO, userDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/comments/{commentId}")
-    public ResponseEntity<CommentResponseDTO> modifyComment(@PathVariable Long commentId, @RequestBody CommentRequestDTO commentRequestDTO,
+    public ResponseEntity<CommentResponseDTO> modifyComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentRequestDTO commentRequestDTO,
         @LoginUser UserDetails userDetails) {
-        CommentResponseDTO response = commentService.modifyComment(commentId, commentRequestDTO, userDetails);
+        CommentResponseDTO response = commentService.modifyComment(postId, commentId, commentRequestDTO, userDetails);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/comments/{commentId}")
-    public ResponseEntity<BaseResponseDTO> deleteComment(@PathVariable Long commentId, @LoginUser UserDetails userDetails) {
-        BaseResponseDTO response = commentService.deleteComment(commentId, userDetails);
+    public ResponseEntity<BaseResponseDTO> deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @LoginUser UserDetails userDetails) {
+        BaseResponseDTO response = commentService.deleteComment(postId, commentId, userDetails);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
